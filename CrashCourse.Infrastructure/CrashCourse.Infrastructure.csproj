@@ -13,5 +13,13 @@
   <ItemGroup>
     <Folder Include="Repository\" />
     <Folder Include="Services\" />
+    <Folder Include="Repository\InMemory\" />
+    <Folder Include="Repository\EF\" />
+    <Folder Include="Repository\Dapper\" />
+    <Folder Include="Repository\Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.1" />
+    <PackageReference Include="Dapper" Version="1.60.6" />
   </ItemGroup>
 </Project>

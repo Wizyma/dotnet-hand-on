@@ -5,7 +5,7 @@ using CrashCourse.Domain.Entities;
 using CrashCourse.Domain.Repositories;
 using CrashCourse.Domain.Services;
 
-namespace CrashCourse.Infrastructure.Repository
+namespace CrashCourse.Infrastructure.Repository.InMemory
 {
     public class InMemoryCrashCourseRepository : ICrashCourseRepository
     {

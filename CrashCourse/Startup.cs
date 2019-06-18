@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using CrashCourse.Domain.Repositories;
 using CrashCourse.Domain.Services;
 using CrashCourse.Infrastructure.Repository;
+using CrashCourse.Infrastructure.Repository.Dapper;
+using CrashCourse.Infrastructure.Repository.EF;
+using CrashCourse.Infrastructure.Repository.InMemory;
 using CrashCourse.Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,7 +35,9 @@ namespace CrashCourse.Api
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddScoped<IClockService, ClockService>();
-            services.AddScoped<ICrashCourseRepository, InMemoryCrashCourseRepository>();
+            // services.AddScoped<ICrashCourseRepository, InMemoryCrashCourseRepository>();
+            // services.AddScoped<ICrashCourseRepository, EFCrashCourseRepository>();
+            services.AddScoped<ICrashCourseRepository, DapperCrashCourseRepository>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Crash Course API", Version = "v1" });

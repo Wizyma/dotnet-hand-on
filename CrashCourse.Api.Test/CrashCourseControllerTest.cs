@@ -84,6 +84,7 @@ namespace CrashCourse.Api.Test
             var result = controller.Edit(1, new EditCrashCourseDTO() { Title = "Test", Description = "Test Desc" });
 
             crashCourseRepositoryFactory.Verify(r => r.GetById(1), "Not invoked");
+            crashCourseRepositoryFactory.Verify(r => r.Save(It.IsAny<CrashCourseDomain>()), "Not invoked");
             // Check.That(result).Equals(mockData.Select(CrashCourseDTO.From));
         }
     }

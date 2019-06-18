@@ -4,6 +4,7 @@ using CrashCourse.Domain.Entities;
 using CrashCourse.Domain.Repositories;
 using CrashCourse.Domain.Services;
 using CrashCourse.DTOs;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -99,9 +100,30 @@ namespace CrashCourse.Api.Controllers
 
             crashCourse.Edit(id, dto.Title, dto.Description);
 
-            _repository.Save(crashCourse);
+            return CrashCourseDTO.From(_repository.Save(crashCourse));
+        }
 
-            return CrashCourseDTO.From(crashCourse);
+        [HttpPatch("{id}/edit")]
+        public ActionResult<CrashCourseDTO> Edit(long id, [FromBody] JsonPatchDocument<EditCrashCourseDTO> crashCoursePatch)
+        {
+            var crashCourse = _repository.GetById(id);
+
+            if (crashCourse == null)
+                return NotFound();
+
+            var dto = new EditCrashCourseDTO
+            {
+                Title = crashCourse.Title,
+                Description = crashCourse.Description
+            };
+
+            crashCoursePatch.ApplyTo(dto);
+
+            crashCourse.Edit(id, dto.Title, dto.Description);
+
+
+            return CrashCourseDTO.From(_repository.Save(crashCourse));
+
         }
     }
 }
