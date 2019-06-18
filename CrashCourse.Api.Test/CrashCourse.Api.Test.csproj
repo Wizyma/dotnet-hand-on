@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CrashCourse\CrashCourse.Api.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Moq" Version="4.11.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.1" />
+    <PackageReference Include="NFluent" Version="2.5.0" />
+  </ItemGroup>
+</Project>

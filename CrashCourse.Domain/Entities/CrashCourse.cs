@@ -42,5 +42,18 @@ namespace CrashCourse.Domain.Entities
             Solution = solution;
         }
 
+        public void Edit(long id, string title, string description)
+        {
+            if (string.IsNullOrEmpty(title?.Trim()) || string.IsNullOrEmpty(description?.Trim()))
+                throw new CrashCourseDomainEditNullOrEmptyParams(Id, title, description);
+
+            if (ClosedAt.HasValue)
+                throw new CrashCourseDomainAlreadyClosedException(Id, ClosedAt);
+
+            Title = title;
+            Description = description;
+
+        }
+
     }
 }

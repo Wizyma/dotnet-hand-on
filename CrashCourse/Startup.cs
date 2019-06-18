@@ -45,10 +45,6 @@ namespace CrashCourse.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1", "Crash Course API V1");
-                });
             }
             else
             {
@@ -57,7 +53,15 @@ namespace CrashCourse.Api
 
             // app.UseHttpsRedirection();
             app.UseMvc();
-            app.UseSwagger();
+
+            if (env.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Crash Course API V1");
+                });
+            }
         }
     }
 }

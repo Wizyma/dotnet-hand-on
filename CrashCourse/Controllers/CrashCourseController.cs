@@ -16,6 +16,11 @@ namespace CrashCourse.Api.Controllers
         private readonly ICrashCourseRepository _repository;
         private readonly IClockService _clockService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:CrashCourse.Api.Controllers.CrashCourseController"/> class.
+        /// </summary>
+        /// <param name="repository">Repository.</param>
+        /// <param name="clockService">Clock service.</param>
         public CrashCourseController(ICrashCourseRepository repository, IClockService clockService)
         {
             _repository = repository;
@@ -34,6 +39,7 @@ namespace CrashCourse.Api.Controllers
                 .Select(CrashCourseDTO.From);
         }
 
+
         /// <summary>
         /// Gets the by identifier.
         /// </summary>
@@ -50,19 +56,26 @@ namespace CrashCourse.Api.Controllers
         }
 
         /// <summary>
-        /// Post the specified value.
+        /// Post the specified dto.
         /// </summary>
-        /// <param name="value">Value.</param>
+        /// <returns>The post.</returns>
+        /// <param name="dto">Dto.</param>
         [HttpPost]
-        public ActionResult Post([FromBody]CrashCourseDTO dto)
+        public ActionResult Post([FromBody]AddCrashCourseDTO dto)
         {
-            var crashCrouse = _repository.Add(dto.To());
+            var crashCrouse = _repository.Add(dto.Title, dto.Description);
 
             return Created($"api/CrashCourse", crashCrouse);
         }
 
+        /// <summary>
+        /// Put the specified id and dto.
+        /// </summary>
+        /// <returns>The put.</returns>
+        /// <param name="id">Identifier.</param>
+        /// <param name="dto">Dto.</param>
         [HttpPut("{id}/close")]
-        public ActionResult<CrashCourseDTO> Put(long id, [FromBody] CrashCourseDTO dto)
+        public ActionResult<CrashCourseDTO> Put(long id, [FromBody] CloseCrashCourseDTO dto)
         {
             var crashCourse = _repository.GetById(id);
 
@@ -70,6 +83,21 @@ namespace CrashCourse.Api.Controllers
                 return NotFound();
 
             crashCourse.Close(_clockService, dto.Solution);
+
+            _repository.Save(crashCourse);
+
+            return CrashCourseDTO.From(crashCourse);
+        }
+
+        [HttpPut("{id}/edit")]
+        public ActionResult<CrashCourseDTO> Edit(long id, [FromBody] EditCrashCourseDTO dto)
+        {
+            var crashCourse = _repository.GetById(id);
+
+            if (crashCourse == null)
+                return NotFound();
+
+            crashCourse.Edit(id, dto.Title, dto.Description);
 
             _repository.Save(crashCourse);
 

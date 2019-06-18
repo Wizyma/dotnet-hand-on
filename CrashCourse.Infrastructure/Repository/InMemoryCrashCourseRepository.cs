@@ -22,10 +22,10 @@ namespace CrashCourse.Infrastructure.Repository
         /// Add the specified crashCourse.
         /// </summary>
         /// <param name="crashCourse">Crash course.</param>
-        public CrashCourseDomain Add(CrashCourseDomain crashCourse)
+        public CrashCourseDomain Add(string title, string description)
         {
             var id = _data.Any() ? _data.Max(cCourse => cCourse.Id) + 1 : 1;
-            var crashCourseToAdd = new CrashCourseDomain(id, crashCourse.Title, crashCourse.Description, clockService.Now);
+            var crashCourseToAdd = new CrashCourseDomain(id, title, description, clockService.Now);
 
             _data.Add(crashCourseToAdd);
 

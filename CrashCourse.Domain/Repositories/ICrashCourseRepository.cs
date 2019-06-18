@@ -9,7 +9,7 @@ namespace CrashCourse.Domain.Repositories
     {
         IEnumerable<CrashCourseDomain> GetAll();
         CrashCourseDomain GetById(long id);
-        CrashCourseDomain Add(CrashCourseDomain crashCourse);
+        CrashCourseDomain Add(string title, string description);
         CrashCourseDomain Save(CrashCourseDomain crashCourse);
     }
 }
