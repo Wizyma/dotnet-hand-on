@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using CrashCourse.Domain.Repositories;
 using CrashCourse.Domain.Services;
@@ -9,6 +10,7 @@ using CrashCourse.Infrastructure.Repository.Dapper;
 using CrashCourse.Infrastructure.Repository.EF;
 using CrashCourse.Infrastructure.Repository.InMemory;
 using CrashCourse.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -17,6 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace CrashCourse.Api
@@ -35,9 +38,27 @@ namespace CrashCourse.Api
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddScoped<IClockService, ClockService>();
-            // services.AddScoped<ICrashCourseRepository, InMemoryCrashCourseRepository>();
+            services.AddScoped<IUserRepository, InMemoryUserRepository>();
             // services.AddScoped<ICrashCourseRepository, EFCrashCourseRepository>();
             services.AddScoped<ICrashCourseRepository, DapperCrashCourseRepository>();
+            services
+                    .AddAuthentication(x => 
+                    {
+                        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                        x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    })
+                    .AddJwtBearer(opt =>
+                    {
+                        opt.RequireHttpsMetadata = false;
+                        opt.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = false,
+                            ValidateAudience = false,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("FLDKJSKFDDKFJHKDJFIOENZBKBDFSOHFJDFBKNCIODHFOUABEZFJKLSDFJK"))
+                        };
+                        opt.Audience = null;
+                        opt.Authority = null;
+                    });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Crash Course API", Version = "v1" });
@@ -57,6 +78,7 @@ namespace CrashCourse.Api
             }
 
             // app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseMvc();
 
             if (env.IsDevelopment())

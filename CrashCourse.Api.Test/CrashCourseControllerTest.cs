@@ -71,8 +71,12 @@ namespace CrashCourse.Api.Test
 
             var crashCourseRepositoryFactory = new Mock<ICrashCourseRepository>();
             crashCourseRepositoryFactory
-                .Setup(i => i.GetAll())
-                .Returns(mockData);
+                .Setup(i => i.GetById(It.IsAny<long>()))
+                .Returns(mockData[0]);
+
+            crashCourseRepositoryFactory
+                .Setup(i => i.Save(It.IsAny<CrashCourseDomain>()))
+                .Returns(mockData[0]);
 
             var crashCourseRepositoryMock = crashCourseRepositoryFactory.Object;
 
@@ -85,7 +89,37 @@ namespace CrashCourse.Api.Test
 
             crashCourseRepositoryFactory.Verify(r => r.GetById(1), "Not invoked");
             crashCourseRepositoryFactory.Verify(r => r.Save(It.IsAny<CrashCourseDomain>()), "Not invoked");
-            // Check.That(result).Equals(mockData.Select(CrashCourseDTO.From));
+        }
+
+        [Fact]
+        public void Test_crash_course_controller_close()
+        {
+            var mockData = new[] {
+                new CrashCourseDomain(1, "Controller Test", "Description Controller Test", DateTime.Now)
+            };
+
+            var crashCourseRepositoryFactory = new Mock<ICrashCourseRepository>();
+            crashCourseRepositoryFactory
+                .Setup(i => i.GetById(It.IsAny<long>()))
+                .Returns(mockData[0]);
+
+            crashCourseRepositoryFactory
+                .Setup(i => i.Save(It.IsAny<CrashCourseDomain>()))
+                .Returns(mockData[0]);
+
+            var crashCourseRepositoryMock = crashCourseRepositoryFactory.Object;
+
+            var clockServiceFactory = new Mock<IClockService>();
+            var clockServiceMock = clockServiceFactory.Object;
+
+            var controller = new CrashCourseController(crashCourseRepositoryMock, clockServiceMock);
+
+            var result = controller.Put(1, new CloseCrashCourseDTO() { Solution = "Test close" });
+
+            crashCourseRepositoryFactory.Verify(r => r.GetById(1), "Not invoked");
+            crashCourseRepositoryFactory.Verify(r => r.Save(It.IsAny<CrashCourseDomain>()), "Not invoked");
+
+            Assert.NotNull(result.Value.ClosedAt);
         }
     }
 }

@@ -1,31 +1,76 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using CrashCourse.Domain.Entities;
 using CrashCourse.Domain.Repositories;
 using CrashCourse.Domain.Services;
 using CrashCourse.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace CrashCourse.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class CrashCourseController : Controller
     {
         private readonly ICrashCourseRepository _repository;
         private readonly IClockService _clockService;
+        private readonly IUserRepository _userRepository;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:CrashCourse.Api.Controllers.CrashCourseController"/> class.
         /// </summary>
         /// <param name="repository">Repository.</param>
         /// <param name="clockService">Clock service.</param>
-        public CrashCourseController(ICrashCourseRepository repository, IClockService clockService)
+        public CrashCourseController(ICrashCourseRepository repository, IClockService clockService, IUserRepository userRepository)
         {
             _repository = repository;
             _clockService = clockService;
+            _userRepository = userRepository;
+        }
+
+        private string GenerateToken(User user)
+        {
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Issuer = null,
+                Audience = null,
+                IssuedAt = DateTime.UtcNow,
+                NotBefore = DateTime.UtcNow,
+                Expires = DateTime.UtcNow.AddMinutes(10),
+                Subject = new ClaimsIdentity(new List<Claim>
+                {
+                    new Claim("userid", user.Id.ToString())
+                }),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("FLDKJSKFDDKFJHKDJFIOENZBKBDFSOHFJDFBKNCIODHFOUABEZFJKLSDFJK")), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = jwtTokenHandler.CreateJwtSecurityToken(tokenDescriptor);
+            var token = jwtTokenHandler.WriteToken(jwtToken);
+
+            return token;
+        }
+
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public ActionResult<string> Login([FromBody] LoginDTO dto)
+        {
+            User user = _userRepository.Login(dto.username, dto.password);
+
+            if (user == null)
+                return NotFound();
+
+            return GenerateToken(user);
         }
 
         /// <summary>
