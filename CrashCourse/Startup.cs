@@ -39,8 +39,8 @@ namespace CrashCourse.Api
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddScoped<IClockService, ClockService>();
             services.AddScoped<IUserRepository, InMemoryUserRepository>();
-            // services.AddScoped<ICrashCourseRepository, EFCrashCourseRepository>();
-            services.AddScoped<ICrashCourseRepository, DapperCrashCourseRepository>();
+            services.AddScoped<ICrashCourseRepository, EFCrashCourseRepository>();
+            // services.AddScoped<ICrashCourseRepository, DapperCrashCourseRepository>();
             services
                     .AddAuthentication(x => 
                     {

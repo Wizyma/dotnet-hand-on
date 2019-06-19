@@ -13,6 +13,8 @@ namespace CrashCourse.Api.Test
 {
     public class CrashCourseControllerTest
     {
+        private Mock<IUserRepository> _userRepository;
+
         [Fact]
         public void Test_crash_course_controller_get_all()
         {
@@ -30,7 +32,7 @@ namespace CrashCourse.Api.Test
             var clockServiceFactory = new Mock<IClockService>();
             var clockServiceMock = clockServiceFactory.Object;
 
-            var controller = new CrashCourseController(crashCourseRepositoryMock, clockServiceMock);
+            var controller = new CrashCourseController(crashCourseRepositoryMock, clockServiceMock, _userRepository.Object);
 
             var result = controller.Get();
             Assert.Equal(result.Count(), 1);
@@ -54,7 +56,7 @@ namespace CrashCourse.Api.Test
             var clockServiceFactory = new Mock<IClockService>();
             var clockServiceMock = clockServiceFactory.Object;
 
-            var controller = new CrashCourseController(crashCourseRepositoryMock, clockServiceMock);
+            var controller = new CrashCourseController(crashCourseRepositoryMock, clockServiceMock, _userRepository.Object);
 
             var result = controller.GetById(1);
 
@@ -83,7 +85,7 @@ namespace CrashCourse.Api.Test
             var clockServiceFactory = new Mock<IClockService>();
             var clockServiceMock = clockServiceFactory.Object;
 
-            var controller = new CrashCourseController(crashCourseRepositoryMock, clockServiceMock);
+            var controller = new CrashCourseController(crashCourseRepositoryMock, clockServiceMock, _userRepository.Object);
 
             var result = controller.Edit(1, new EditCrashCourseDTO() { Title = "Test", Description = "Test Desc" });
 
@@ -112,7 +114,7 @@ namespace CrashCourse.Api.Test
             var clockServiceFactory = new Mock<IClockService>();
             var clockServiceMock = clockServiceFactory.Object;
 
-            var controller = new CrashCourseController(crashCourseRepositoryMock, clockServiceMock);
+            var controller = new CrashCourseController(crashCourseRepositoryMock, clockServiceMock, _userRepository.Object);
 
             var result = controller.Put(1, new CloseCrashCourseDTO() { Solution = "Test close" });
 
